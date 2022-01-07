@@ -1,2 +1,3 @@
-A sample command-line application with an entrypoint in `bin/`, library code
-in `lib/`, and example unit test in `test/`.
+# dlox
+
+[Crafting Interpreters](https://craftinginterpreters.com/) lox language of dart variant
