@@ -12,3 +12,19 @@ commitlint.config.js
 package-lock.json
 package.json
 
+
+## conventional commit related files
+node_modules/ 
+.husky/
+commitlint.config.js
+package-lock.json
+package.json
+
+
+## conventional commit related files
+node_modules/ 
+.husky/
+commitlint.config.js
+package-lock.json
+package.json
+

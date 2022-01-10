@@ -85,11 +85,11 @@ class Parser {
   }
 
   Expr primary() {
-    if (match([TokenType.falseT])) {
+    if (match([TokenType.$false])) {
       return Literal(value: false);
     }
 
-    if (match([TokenType.trueT])) {
+    if (match([TokenType.$true])) {
       return Literal(value: true);
     }
 
@@ -167,14 +167,14 @@ class Parser {
       }
 
       switch (peek().type) {
-        case TokenType.classT:
+        case TokenType.$class:
         case TokenType.fun:
-        case TokenType.varT:
-        case TokenType.forT:
-        case TokenType.ifT:
-        case TokenType.whileT:
+        case TokenType.$var:
+        case TokenType.$for:
+        case TokenType.$if:
+        case TokenType.$while:
         case TokenType.print:
-        case TokenType.returnT:
+        case TokenType.$return:
           return;
 
         default:
