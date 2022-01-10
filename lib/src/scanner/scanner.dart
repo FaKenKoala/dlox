@@ -14,21 +14,21 @@ class Scanner {
 
   final Map<String, TokenType> keywords = {
     "and": TokenType.and,
-    "class": TokenType.classT,
-    "else": TokenType.elseT,
-    "false": TokenType.falseT,
-    "for": TokenType.forT,
+    "class": TokenType.$class,
+    "else": TokenType.$else,
+    "false": TokenType.$false,
+    "for": TokenType.$for,
     "fun": TokenType.fun,
-    "if": TokenType.ifT,
+    "if": TokenType.$if,
     "nil": TokenType.nil,
     "or": TokenType.or,
     "print": TokenType.print,
-    "return": TokenType.returnT,
-    "super": TokenType.superT,
-    "this": TokenType.thisT,
-    "true": TokenType.trueT,
-    "var": TokenType.varT,
-    "while": TokenType.whileT
+    "return": TokenType.$return,
+    "super": TokenType.$super,
+    "this": TokenType.$this,
+    "true": TokenType.$true,
+    "var": TokenType.$var,
+    "while": TokenType.$while
   };
 
   List<Token> scanTokens() {
