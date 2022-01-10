@@ -168,10 +168,13 @@ class Scanner {
   }
 
   bool match(String expected) {
-    if (isAtEnd()) return false;
-    final text = source.substring(_current, _current + 1);
-    print('比对: $text');
-    if (source.substring(_current, _current + 1) != expected) return false;
+    if (isAtEnd()) {
+      return false;
+    }
+
+    if (source.substring(_current, _current + 1) != expected) {
+      return false;
+    }
 
     _current++;
     return true;

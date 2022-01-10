@@ -1,7 +1,2 @@
-// this is a comment
-(( )){} // grouping stuff
-!*+-/=<> <= == // operators
-"123
-34124"
-
-{}
+//((1))
+1+1
