@@ -1,5 +1,10 @@
 import 'dart:io';
 
+import 'package:dlox/src/ast_printer/ast_printer.dart';
+import 'package:dlox/src/expr/expr.dart';
+import 'package:dlox/src/parser/parser.dart';
+import 'package:dlox/src/token/token_type.dart';
+
 import 'src/scanner/scanner.dart';
 import 'src/token/token.dart';
 
@@ -36,10 +41,13 @@ class Lox {
   static void _run(String source) {
     Scanner scanner = Scanner(source);
     List<Token> tokens = scanner.scanTokens();
+    Parser parser = Parser(tokens);
+    Expr? expression = parser.parse();
 
-    for (Token token in tokens) {
-      print(token);
+    if (hadError || expression == null) {
+      return;
     }
+    print(AstPrinter().print(expression));
   }
 
   static void error(int line, String message) {
@@ -49,5 +57,13 @@ class Lox {
   static void _report(int line, String where, String message) {
     print('[line $line ] Error$where: $message');
     hadError = true;
+  }
+
+  static void errorToken(Token token, String message) {
+    if (token.type == TokenType.eof) {
+      _report(token.line, " at end", message);
+    } else {
+      _report(token.line, " at '${token.lexeme}'", message);
+    }
   }
 }
