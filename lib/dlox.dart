@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:dlox/src/ast_printer/ast_printer.dart';
+import 'package:dlox/src/error/runtime_error.dart';
 import 'package:dlox/src/expr/expr.dart';
+import 'package:dlox/src/interpreter/interpreter.dart';
 import 'package:dlox/src/parser/parser.dart';
 import 'package:dlox/src/token/token_type.dart';
 
@@ -9,7 +11,9 @@ import 'src/scanner/scanner.dart';
 import 'src/token/token.dart';
 
 class Lox {
+  static final Interpreter interpreter = Interpreter();
   static bool hadError = false;
+  static bool hadRuntimeError = false;
 
   static void run(List<String> arguments) {
     if (arguments.length > 1) {
@@ -24,6 +28,13 @@ class Lox {
   static void _runFile(String path) {
     String bytes = File(path).readAsStringSync();
     _run(bytes);
+
+    if (hadError) {
+      exit(65);
+    }
+    if (hadRuntimeError) {
+      exit(70);
+    }
   }
 
   static void _runPrompt() {
@@ -47,7 +58,7 @@ class Lox {
     if (hadError || expression == null) {
       return;
     }
-    print(AstPrinter().print(expression));
+    interpreter.interpret(expression);
   }
 
   static void error(int line, String message) {
@@ -65,5 +76,10 @@ class Lox {
     } else {
       _report(token.line, " at '${token.lexeme}'", message);
     }
+  }
+
+  static void runtimeError(RuntimeError error) {
+    print("${error.message}\n[line ${error.token.line}]}");
+    hadRuntimeError = true;
   }
 }

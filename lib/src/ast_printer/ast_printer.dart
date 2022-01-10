@@ -2,7 +2,7 @@ import 'package:dlox/src/expr/expr.dart';
 
 class AstPrinter implements Visitor<String> {
   String print(Expr expr) {
-    return expr.accept(this);
+    return expr.accept(this) ?? 'empty';
   }
 
   @override

@@ -29,7 +29,7 @@ class GenerateAst {
     sink.writeln();
 
     sink.writeln('abstract class $baseName {');
-    sink.writeln('  R accept<R>(Visitor<R> visitor);');
+    sink.writeln('  R? accept<R>(Visitor<R> visitor);');
     sink.writeln('}');
     defineVisitor(sink, baseName, types);
 
@@ -50,7 +50,7 @@ class GenerateAst {
     for (String type in types) {
       String typeName = type.split(':')[0].trim();
       sink.writeln(
-          "  R visit$typeName$baseName($typeName ${baseName.toLowerCase()});");
+          "  R? visit$typeName$baseName($typeName ${baseName.toLowerCase()});");
     }
     sink.writeln("}");
   }
@@ -80,7 +80,7 @@ class GenerateAst {
 
     sink.writeln();
     sink.writeln('  @override');
-    sink.writeln('  R accept<R>(Visitor<R> visitor) {');
+    sink.writeln('  R? accept<R>(Visitor<R> visitor) {');
     sink.writeln('    return visitor.visit$className$baseName(this);');
     sink.writeln('  }');
 
