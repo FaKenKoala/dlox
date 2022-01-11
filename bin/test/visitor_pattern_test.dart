@@ -30,7 +30,19 @@ void main() {
   Visitor<double> visitorB = VisitorB();
   Visitor<String> visitorC = VisitorC();
 
-  for (;;) print('ok');
+  Function() makeCounter() {
+    var i = 0;
+    count() {
+      i++;
+      print(i);
+    }
+
+    return count;
+  }
+
+  final counter = makeCounter();
+  counter();
+  counter();
 }
 
 abstract class Visitor<R> {

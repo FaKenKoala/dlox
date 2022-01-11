@@ -5,8 +5,9 @@ import 'package:dlox/src/interpreter/interpreter.dart';
 import 'package:dlox/src/stmt/stmt.dart';
 
 class LoxFunction implements LoxCallable {
-  LoxFunction(this._declaration);
+  LoxFunction(this._declaration, this._closure);
   final Funct _declaration;
+  final Environment _closure;
 
   @override
   int arity() {
@@ -15,7 +16,7 @@ class LoxFunction implements LoxCallable {
 
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments) {
-    Environment environment = Environment(interpreter.globals);
+    Environment environment = Environment(_closure);
     for (int i = 0; i < _declaration.params.length; i++) {
       environment.define(_declaration.params[i].lexeme, arguments[i]);
     }
