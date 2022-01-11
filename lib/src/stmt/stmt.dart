@@ -8,8 +8,10 @@ abstract class Stmt {
 abstract class Visitor<R> {
   R? visitBlockStmt(Block stmt);
   R? visitExpressionStmt(Expression stmt);
+  R? visitIfStmt(If stmt);
   R? visitPrintStmt(Print stmt);
   R? visitVarStmt(Var stmt);
+  R? visitWhileStmt(While stmt);
 }
 
 class Block extends Stmt {
@@ -38,6 +40,23 @@ class Expression extends Stmt {
   }
 }
 
+class If extends Stmt {
+  If({
+    required this.condition,
+    required this.thenBranch,
+    required this.elseBranch,
+  });
+
+  final Expr condition;
+  final Stmt thenBranch;
+  final Stmt? elseBranch;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitIfStmt(this);
+  }
+}
+
 class Print extends Stmt {
   Print({
     required this.expression,
@@ -63,5 +82,20 @@ class Var extends Stmt {
   @override
   R? accept<R>(Visitor<R> visitor) {
     return visitor.visitVarStmt(this);
+  }
+}
+
+class While extends Stmt {
+  While({
+    required this.condition,
+    required this.body,
+  });
+
+  final Expr condition;
+  final Stmt body;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitWhileStmt(this);
   }
 }

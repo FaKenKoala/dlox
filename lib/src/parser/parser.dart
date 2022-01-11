@@ -38,8 +38,16 @@ class Parser {
   }
 
   Stmt statement() {
+    if (match([TokenType.$if])) {
+      return ifStatement();
+    }
+
     if (match([TokenType.print])) {
       return printStatement();
+    }
+
+    if (match([TokenType.$while])) {
+      return whileStatement();
     }
 
     if (match([TokenType.leftBrace])) {
@@ -48,10 +56,34 @@ class Parser {
     return expressionStatement();
   }
 
+  Stmt ifStatement() {
+    consume(TokenType.leftParen, "Expect '(' after 'if'.");
+    Expr condition = expression();
+    consume(TokenType.rightParen, "Expect ')' after if condition");
+
+    Stmt thenBranch = statement();
+    Stmt? elseBranch;
+    if (match([TokenType.$else])) {
+      elseBranch = statement();
+    }
+
+    return If(
+        condition: condition, thenBranch: thenBranch, elseBranch: elseBranch);
+  }
+
   Stmt printStatement() {
     Expr value = expression();
     consume(TokenType.semicolon, "Expect ';' after value.");
     return Print(expression: value);
+  }
+
+  Stmt whileStatement() {
+    consume(TokenType.leftParen, "Expect '(' after 'while'.");
+    Expr condition = expression();
+    consume(TokenType.rightParen, "Expect ')' after condition.");
+    Stmt body = statement();
+
+    return While(condition: condition, body: body);
   }
 
   Stmt varDeclaration() {
@@ -91,7 +123,7 @@ class Parser {
   }
 
   Expr assignment() {
-    Expr expr = equality();
+    Expr expr = or();
     if (match([TokenType.equal])) {
       Token equals = previous();
       Expr value = assignment();
@@ -103,6 +135,30 @@ class Parser {
 
       error(equals, "Invalid assignment target.");
     }
+    return expr;
+  }
+
+  Expr or() {
+    Expr expr = and();
+
+    while (match([TokenType.or])) {
+      Token operator = previous();
+      Expr right = and();
+      expr = Logical(left: expr, operator: operator, right: right);
+    }
+
+    return expr;
+  }
+
+  Expr and() {
+    Expr expr = equality();
+
+    while (match([TokenType.and])) {
+      Token operator = previous();
+      Expr right = equality();
+      expr = Logical(left: expr, operator: operator, right: right);
+    }
+
     return expr;
   }
 

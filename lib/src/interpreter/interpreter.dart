@@ -67,6 +67,22 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   }
 
   @override
+  Object? visitLogicalExpr(expr.Logical expr) {
+    Object? left = evaluate(expr.left);
+
+    if (expr.operator.type == TokenType.or) {
+      if (isTruthy(left)) {
+        return left;
+      }
+    } else {
+      if (!isTruthy(left)) {
+        return left;
+      }
+    }
+    return evaluate(expr.right);
+  }
+
+  @override
   Object? visitUnaryExpr(expr.Unary expr) {
     Object? right = evaluate(expr.right);
 
@@ -118,6 +134,22 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   @override
   void visitBlockStmt(stmt.Block stmt) {
     executeBlock(stmt.statements, Environment(_environment));
+  }
+
+  @override
+  void visitIfStmt(stmt.If stmt) {
+    if (isTruthy(evaluate(stmt.condition))) {
+      execute(stmt.thenBranch);
+    } else if (stmt.elseBranch != null) {
+      execute(stmt.elseBranch!);
+    }
+  }
+
+  @override
+  void visitWhileStmt(stmt.While stmt) {
+    while (isTruthy(evaluate(stmt.condition))) {
+      execute(stmt.body);
+    }
   }
 
   checkNumberOperand(Token operator, Object? operand) {

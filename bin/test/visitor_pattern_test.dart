@@ -29,7 +29,6 @@ void main() {
   Visitor<int> visitorA = VisitorA();
   Visitor<double> visitorB = VisitorB();
   Visitor<String> visitorC = VisitorC();
-
 }
 
 abstract class Visitor<R> {

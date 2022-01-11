@@ -1,10 +1,7 @@
 var a = 10;
-var b = 20;
-{
-    var a = 30;
-    b = 30;
+
+while (a >= 0) {
     print a;
-    print b;
+    a = a - 1;
 }
-print a;
-print b;
+print "结束";
