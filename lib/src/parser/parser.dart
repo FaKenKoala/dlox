@@ -1,5 +1,6 @@
 import 'package:dlox/src/expr/expr.dart';
 import 'package:dlox/src/parser/parse_error.dart';
+import 'package:dlox/src/stmt/stmt.dart';
 import 'package:dlox/src/token/token.dart';
 import 'package:dlox/src/token/token_type.dart';
 
@@ -10,16 +11,99 @@ class Parser {
   final List<Token> _tokens;
   int _current = 0;
 
-  Expr? parse() {
+  List<Stmt> parse() {
+    List<Stmt> statements = [];
+    while (!isAtEnd()) {
+      Stmt? result = declaration();
+
+      /// add nonnull value to list
+      if (result != null) {
+        statements.add(result);
+      }
+    }
+    return statements;
+  }
+
+  Stmt? declaration() {
     try {
-      return expression();
+      if (match([TokenType.$var])) {
+        return varDeclaration();
+      }
+
+      return statement();
     } on ParseError catch (error) {
+      synchronize();
       return null;
     }
   }
 
+  Stmt statement() {
+    if (match([TokenType.print])) {
+      return printStatement();
+    }
+
+    if (match([TokenType.leftBrace])) {
+      return Block(statements: block());
+    }
+    return expressionStatement();
+  }
+
+  Stmt printStatement() {
+    Expr value = expression();
+    consume(TokenType.semicolon, "Expect ';' after value.");
+    return Print(expression: value);
+  }
+
+  Stmt varDeclaration() {
+    Token name = consume(TokenType.identifier, 'Expect variable name.');
+
+    Expr? initializer;
+    if (match([TokenType.equal])) {
+      initializer = expression();
+    }
+
+    consume(TokenType.semicolon, "Expect ';' after variable declaration.");
+    return Var(name: name, initializer: initializer);
+  }
+
+  Stmt expressionStatement() {
+    Expr expr = expression();
+    consume(TokenType.semicolon, "Expect ';' after expression.");
+    return Expression(expression: expr);
+  }
+
+  List<Stmt> block() {
+    List<Stmt> statements = [];
+
+    while (!check(TokenType.rightBrace) && !isAtEnd()) {
+      final result = declaration();
+      if (result != null) {
+        statements.add(result);
+      }
+    }
+
+    consume(TokenType.rightBrace, "Expect '}' after block.");
+    return statements;
+  }
+
   Expr expression() {
-    return equality();
+    return assignment();
+  }
+
+  Expr assignment() {
+    Expr expr = equality();
+    if (match([TokenType.equal])) {
+      Token equals = previous();
+      Expr value = assignment();
+
+      if (expr is Variable) {
+        Token name = expr.name;
+        return Assign(name: name, value: value);
+      }
+
+      error(equals, "Invalid assignment target.");
+    }
+    return expr;
   }
 
   Expr equality() {
@@ -99,6 +183,10 @@ class Parser {
 
     if (match([TokenType.number, TokenType.string])) {
       return Literal(value: previous().literal);
+    }
+
+    if (match([TokenType.identifier])) {
+      return Variable(name: previous());
     }
 
     if (match([TokenType.leftParen])) {

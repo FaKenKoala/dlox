@@ -1,16 +1,27 @@
 import 'dart:io';
 
 void main(List<String> arguments) {
-  if (arguments.length != 1) {
-    print('Usage: generate_ast <output directory>');
-    return;
+  String? outputDir; // = arguments[0];
+
+  if (arguments.length == 1) {
+    // print('Usage: generate_ast <output directory>');
+    // return;
+    outputDir = arguments[0];
   }
-  String outputDir = arguments[0];
-  GenerateAst.defineAst(outputDir, "Expr", [
+  GenerateAst.defineAst(outputDir ?? 'lib/src/expr/', "Expr", [
+    "Assign   : Token name, Expr value",
     "Binary   : Expr left, Token operator, Expr right",
     "Grouping : Expr expression",
     "Literal  : Object? value",
-    "Unary    : Token operator, Expr right"
+    "Unary    : Token operator, Expr right",
+    "Variable : Token name"
+  ]);
+
+  GenerateAst.defineAst(outputDir ?? 'lib/src/stmt/', "Stmt", [
+    "Block       : List<Stmt> statements",
+    "Expression  : Expr expression",
+    "Print       : Expr expression",
+    "Var         : Token name, Expr? initializer"
   ]);
 }
 
@@ -26,6 +37,9 @@ class GenerateAst {
     }
     final sink = file.openWrite();
     sink.writeln("import 'package:dlox/src/token/token.dart';");
+    if (baseName == 'Stmt') {
+      sink.writeln("import 'package:dlox/src/expr/expr.dart';");
+    }
     sink.writeln();
 
     sink.writeln('abstract class $baseName {');
@@ -72,11 +86,6 @@ class GenerateAst {
     for (String field in fields) {
       sink.writeln("  final $field;");
     }
-
-    // @override
-    // R accept<R>(Visitor<R> visitor) {
-    //   return visitor.visitBinaryExpr(this);
-    // }
 
     sink.writeln();
     sink.writeln('  @override');

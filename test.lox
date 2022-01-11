@@ -1,1 +1,10 @@
-"3" + "2"
+var a = 10;
+var b = 20;
+{
+    var a = 30;
+    b = 30;
+    print a;
+    print b;
+}
+print a;
+print b;

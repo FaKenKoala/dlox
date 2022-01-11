@@ -5,6 +5,7 @@ import 'package:dlox/src/error/runtime_error.dart';
 import 'package:dlox/src/expr/expr.dart';
 import 'package:dlox/src/interpreter/interpreter.dart';
 import 'package:dlox/src/parser/parser.dart';
+import 'package:dlox/src/stmt/stmt.dart';
 import 'package:dlox/src/token/token_type.dart';
 
 import 'src/scanner/scanner.dart';
@@ -53,12 +54,12 @@ class Lox {
     Scanner scanner = Scanner(source);
     List<Token> tokens = scanner.scanTokens();
     Parser parser = Parser(tokens);
-    Expr? expression = parser.parse();
+    List<Stmt> statements = parser.parse();
 
-    if (hadError || expression == null) {
+    if (hadError) {
       return;
     }
-    interpreter.interpret(expression);
+    interpreter.interpret(statements);
   }
 
   static void error(int line, String message) {

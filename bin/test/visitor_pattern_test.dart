@@ -30,7 +30,6 @@ void main() {
   Visitor<double> visitorB = VisitorB();
   Visitor<String> visitorC = VisitorC();
 
-  print(null == null);
 }
 
 abstract class Visitor<R> {

@@ -5,10 +5,27 @@ abstract class Expr {
 }
 
 abstract class Visitor<R> {
+  R? visitAssignExpr(Assign expr);
   R? visitBinaryExpr(Binary expr);
   R? visitGroupingExpr(Grouping expr);
   R? visitLiteralExpr(Literal expr);
   R? visitUnaryExpr(Unary expr);
+  R? visitVariableExpr(Variable expr);
+}
+
+class Assign extends Expr {
+  Assign({
+    required this.name,
+    required this.value,
+  });
+
+  final Token name;
+  final Expr value;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitAssignExpr(this);
+  }
 }
 
 class Binary extends Expr {
@@ -66,5 +83,18 @@ class Unary extends Expr {
   @override
   R? accept<R>(Visitor<R> visitor) {
     return visitor.visitUnaryExpr(this);
+  }
+}
+
+class Variable extends Expr {
+  Variable({
+    required this.name,
+  });
+
+  final Token name;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitVariableExpr(this);
   }
 }

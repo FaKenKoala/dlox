@@ -1,12 +1,16 @@
 import 'package:dlox/dlox.dart';
+import 'package:dlox/src/environment/environment.dart';
 import 'package:dlox/src/error/runtime_error.dart';
-import 'package:dlox/src/expr/expr.dart';
+import 'package:dlox/src/expr/expr.dart' as expr;
+import 'package:dlox/src/stmt/stmt.dart' as stmt;
+import 'package:dlox/src/stmt/stmt.dart';
 import 'package:dlox/src/token/token.dart';
 import 'package:dlox/src/token/token_type.dart';
 
-class Interpreter implements Visitor<Object> {
+class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
+  Environment _environment = Environment();
   @override
-  Object? visitBinaryExpr(Binary expr) {
+  Object? visitBinaryExpr(expr.Binary expr) {
     Object? left = evaluate(expr.left);
     Object? right = evaluate(expr.right);
 
@@ -53,17 +57,17 @@ class Interpreter implements Visitor<Object> {
   }
 
   @override
-  Object? visitGroupingExpr(Grouping expr) {
+  Object? visitGroupingExpr(expr.Grouping expr) {
     return evaluate(expr.expression);
   }
 
   @override
-  Object? visitLiteralExpr(Literal expr) {
+  Object? visitLiteralExpr(expr.Literal expr) {
     return expr.value;
   }
 
   @override
-  Object? visitUnaryExpr(Unary expr) {
+  Object? visitUnaryExpr(expr.Unary expr) {
     Object? right = evaluate(expr.right);
 
     switch (expr.operator.type) {
@@ -76,6 +80,44 @@ class Interpreter implements Visitor<Object> {
       default:
         return null;
     }
+  }
+
+  @override
+  Object? visitVariableExpr(expr.Variable expr) {
+    return _environment.get(expr.name);
+  }
+
+  @override
+  Object? visitAssignExpr(expr.Assign expr) {
+    Object? value = evaluate(expr.value);
+    _environment.assign(expr.name, value);
+    return value;
+  }
+
+  @override
+  void visitExpressionStmt(stmt.Expression stmt) {
+    evaluate(stmt.expression);
+  }
+
+  @override
+  void visitPrintStmt(stmt.Print stmt) {
+    Object? value = evaluate(stmt.expression);
+    print(stringify(value));
+  }
+
+  @override
+  void visitVarStmt(stmt.Var stmt) {
+    Object? value;
+    if (stmt.initializer != null) {
+      value = evaluate(stmt.initializer!);
+    }
+
+    _environment.define(stmt.name.lexeme, value);
+  }
+
+  @override
+  void visitBlockStmt(stmt.Block stmt) {
+    executeBlock(stmt.statements, Environment(_environment));
   }
 
   checkNumberOperand(Token operator, Object? operand) {
@@ -106,14 +148,32 @@ class Interpreter implements Visitor<Object> {
     return left == right;
   }
 
-  Object? evaluate(Expr expr) {
+  Object? evaluate(expr.Expr expr) {
     return expr.accept(this);
   }
 
-  void interpret(Expr expression) {
+  void execute(stmt.Stmt stmt) {
+    stmt.accept(this);
+  }
+
+  void executeBlock(List<Stmt> statements, Environment environment) {
+    Environment previous = _environment;
     try {
-      Object? value = evaluate(expression);
-      print(stringify(value));
+      _environment = environment;
+
+      for (stmt.Stmt statement in statements) {
+        execute(statement);
+      }
+    } finally {
+      _environment = previous;
+    }
+  }
+
+  void interpret(List<stmt.Stmt> statements) {
+    try {
+      for (stmt.Stmt statement in statements) {
+        execute(statement);
+      }
     } on RuntimeError catch (error) {
       Lox.runtimeError(error);
     }

@@ -36,4 +36,16 @@ class AstPrinter implements Visitor<String> {
     buffer.write(')');
     return buffer.toString();
   }
+
+  @override
+  String? visitVariableExpr(Variable expr) {
+    // TODO: implement visitVariableExpr
+    throw UnimplementedError();
+  }
+
+  @override
+  String? visitAssignExpr(Assign expr) {
+    // TODO: implement visitAssignExpr
+    throw UnimplementedError();
+  }
 }
