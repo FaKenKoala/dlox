@@ -1,5 +1,9 @@
 fun sayHi(first, last) {
   print "Hi, " + first + " " + last + "!";
+  if (first == "Dear") {
+    return 20;
+  }
+  return 10;
 }
 
-sayHi("Dear", "Reader");
+print sayHi("Dear1", "Reader");

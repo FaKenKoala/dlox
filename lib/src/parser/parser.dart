@@ -54,6 +54,10 @@ class Parser {
       return printStatement();
     }
 
+    if (match([TokenType.$return])) {
+      return returnStatement();
+    }
+
     if (match([TokenType.$while])) {
       return whileStatement();
     }
@@ -121,6 +125,17 @@ class Parser {
     Expr value = expression();
     consume(TokenType.semicolon, "Expect ';' after value.");
     return Print(expression: value);
+  }
+
+  Stmt returnStatement() {
+    Token keyword = previous();
+    Expr? value;
+    if (!check(TokenType.semicolon)) {
+      value = expression();
+    }
+
+    consume(TokenType.semicolon, "Expect ';' after return value.");
+    return Return(keyword: keyword, value: value);
   }
 
   Stmt whileStatement() {
@@ -346,7 +361,7 @@ class Parser {
       return Grouping(expression: expr);
     }
 
-    throw error(peek(), 'Excect expression.');
+    throw error(peek(), 'Expect expression.');
   }
 
   bool match(List<TokenType> types) {

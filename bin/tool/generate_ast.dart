@@ -22,8 +22,9 @@ void main(List<String> arguments) {
   GenerateAst.defineAst(outputDir ?? 'lib/src/stmt/', "Stmt", [
     "Block       : List<Stmt> statements",
     "Expression  : Expr expression",
-    "Funct    : Token name, List<Token> params, List<Stmt> body",
+    "Funct       : Token name, List<Token> params, List<Stmt> body",
     "If          : Expr condition, Stmt thenBranch, Stmt? elseBranch",
+    "Return      : Token keyword, Expr? value",
     "Print       : Expr expression",
     "Var         : Token name, Expr? initializer",
     "While       : Expr condition, Stmt body"

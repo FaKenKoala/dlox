@@ -1,6 +1,7 @@
 import 'package:dlox/dlox.dart';
 import 'package:dlox/src/callable/lox_callable.dart';
 import 'package:dlox/src/environment/environment.dart';
+import 'package:dlox/src/error/return_error.dart';
 import 'package:dlox/src/error/runtime_error.dart';
 import 'package:dlox/src/expr/expr.dart' as expr;
 import 'package:dlox/src/function/lox_function.dart';
@@ -198,6 +199,15 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   void visitFunctStmt(stmt.Funct stmt) {
     LoxFunction function = LoxFunction(stmt);
     _environment.define(stmt.name.lexeme, function);
+  }
+
+  @override
+  void visitReturnStmt(stmt.Return stmt) {
+    Object? value;
+    if (stmt.value != null) {
+      value = evaluate(stmt.value!);
+    }
+    throw ReturnError(value);
   }
 
   checkNumberOperand(Token operator, Object? operand) {

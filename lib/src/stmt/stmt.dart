@@ -10,6 +10,7 @@ abstract class Visitor<R> {
   R? visitExpressionStmt(Expression stmt);
   R? visitFunctStmt(Funct stmt);
   R? visitIfStmt(If stmt);
+  R? visitReturnStmt(Return stmt);
   R? visitPrintStmt(Print stmt);
   R? visitVarStmt(Var stmt);
   R? visitWhileStmt(While stmt);
@@ -72,6 +73,21 @@ class If extends Stmt {
   @override
   R? accept<R>(Visitor<R> visitor) {
     return visitor.visitIfStmt(this);
+  }
+}
+
+class Return extends Stmt {
+  Return({
+    required this.keyword,
+    required this.value,
+  });
+
+  final Token keyword;
+  final Expr? value;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitReturnStmt(this);
   }
 }
 
