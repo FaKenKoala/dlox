@@ -26,6 +26,10 @@ class Parser {
 
   Stmt? declaration() {
     try {
+      if (match([TokenType.fun])) {
+        return function("function");
+      }
+
       if (match([TokenType.$var])) {
         return varDeclaration();
       }
@@ -38,6 +42,10 @@ class Parser {
   }
 
   Stmt statement() {
+    if (match([TokenType.$for])) {
+      return forStatement();
+    }
+
     if (match([TokenType.$if])) {
       return ifStatement();
     }
@@ -54,6 +62,44 @@ class Parser {
       return Block(statements: block());
     }
     return expressionStatement();
+  }
+
+  Stmt forStatement() {
+    consume(TokenType.leftParen, "Expect '(' after 'for'.");
+    Stmt? initializer;
+    if (match([TokenType.semicolon])) {
+      initializer = null;
+    } else if (match([TokenType.$var])) {
+      initializer = varDeclaration();
+    } else {
+      initializer = expressionStatement();
+    }
+
+    Expr? condition;
+    if (!check(TokenType.semicolon)) {
+      condition = expression();
+    }
+    consume(TokenType.semicolon, "Expect ';' after loop condition.");
+
+    Expr? increment;
+    if (!check(TokenType.rightParen)) {
+      increment = expression();
+    }
+    consume(TokenType.rightParen, "Expect ')' after for clauses.");
+    Stmt body = statement();
+
+    if (increment != null) {
+      body = Block(statements: [body, Expression(expression: increment)]);
+    }
+
+    condition ??= Literal(value: true);
+    body = While(condition: condition, body: body);
+
+    if (initializer != null) {
+      body = Block(statements: [initializer, body]);
+    }
+
+    return body;
   }
 
   Stmt ifStatement() {
@@ -102,6 +148,26 @@ class Parser {
     Expr expr = expression();
     consume(TokenType.semicolon, "Expect ';' after expression.");
     return Expression(expression: expr);
+  }
+
+  Funct function(String kind) {
+    Token name = consume(TokenType.identifier, "Expect $kind name.");
+    consume(TokenType.leftParen, "Expect '(' after $kind name.");
+    List<Token> parameters = [];
+    if (!check(TokenType.rightParen)) {
+      do {
+        if (parameters.length >= 255) {
+          error(peek(), "Can't have more than 255 parameters.");
+        }
+
+        parameters.add(consume(TokenType.identifier, "Expect parameter name."));
+      } while (match([TokenType.comma]));
+    }
+    consume(TokenType.rightParen, "Expect ')' after parameters.");
+
+    consume(TokenType.leftBrace, "Expect '{' before $kind body.");
+    List<Stmt> body = block();
+    return Funct(name: name, params: parameters, body: body);
   }
 
   List<Stmt> block() {
@@ -221,7 +287,36 @@ class Parser {
       return Unary(operator: operator, right: right);
     }
 
-    return primary();
+    return call();
+  }
+
+  Expr call() {
+    Expr expr = primary();
+
+    while (true) {
+      if (match([TokenType.leftParen])) {
+        expr = finishCall(expr);
+      } else {
+        break;
+      }
+    }
+    return expr;
+  }
+
+  Expr finishCall(Expr callee) {
+    List<Expr> arguments = [];
+    if (!check(TokenType.rightParen)) {
+      do {
+        if (arguments.length >= 255) {
+          error(peek(), "Can't have more than 255 arguments");
+        }
+        arguments.add(expression());
+      } while (match([TokenType.comma]));
+    }
+
+    Token paren = consume(TokenType.rightParen, "Expect ')' after arguments.");
+
+    return Call(callee: callee, paren: paren, arguments: arguments);
   }
 
   Expr primary() {

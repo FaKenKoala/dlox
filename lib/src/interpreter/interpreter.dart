@@ -1,14 +1,39 @@
 import 'package:dlox/dlox.dart';
+import 'package:dlox/src/callable/lox_callable.dart';
 import 'package:dlox/src/environment/environment.dart';
 import 'package:dlox/src/error/runtime_error.dart';
 import 'package:dlox/src/expr/expr.dart' as expr;
+import 'package:dlox/src/function/lox_function.dart';
 import 'package:dlox/src/stmt/stmt.dart' as stmt;
 import 'package:dlox/src/stmt/stmt.dart';
 import 'package:dlox/src/token/token.dart';
 import 'package:dlox/src/token/token_type.dart';
 
+class _ClockLoxCallable implements LoxCallable {
+  @override
+  int arity() {
+    return 0;
+  }
+
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments) {
+    return DateTime.now().millisecondsSinceEpoch / 1000.0;
+  }
+
+  @override
+  String toString() {
+    return "<native fn>";
+  }
+}
+
 class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
-  Environment _environment = Environment();
+  final Environment globals = Environment();
+  late Environment _environment = globals;
+
+  Interpreter() {
+    globals.define("clock", _ClockLoxCallable());
+  }
+
   @override
   Object? visitBinaryExpr(expr.Binary expr) {
     Object? left = evaluate(expr.left);
@@ -111,6 +136,23 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   }
 
   @override
+  Object? visitCallExpr(expr.Call exprP) {
+    Object? callee = evaluate(exprP.callee);
+
+    List<Object?> arguments = exprP.arguments.map(evaluate).toList();
+
+    if (callee is! LoxCallable) {
+      throw RuntimeError(exprP.paren, "Can only call functions and classes.");
+    }
+    LoxCallable function = callee;
+    if (arguments.length != function.arity()) {
+      throw RuntimeError(exprP.paren,
+          "Expected ${function.arity()} arguments but got ${arguments.length}.");
+    }
+    return function.call(this, arguments);
+  }
+
+  @override
   void visitExpressionStmt(stmt.Expression stmt) {
     evaluate(stmt.expression);
   }
@@ -150,6 +192,12 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
     while (isTruthy(evaluate(stmt.condition))) {
       execute(stmt.body);
     }
+  }
+
+  @override
+  void visitFunctStmt(stmt.Funct stmt) {
+    LoxFunction function = LoxFunction(stmt);
+    _environment.define(stmt.name.lexeme, function);
   }
 
   checkNumberOperand(Token operator, Object? operand) {

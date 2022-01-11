@@ -1,7 +1,5 @@
-var a = 10;
-
-while (a >= 0) {
-    print a;
-    a = a - 1;
+fun sayHi(first, last) {
+  print "Hi, " + first + " " + last + "!";
 }
-print "结束";
+
+sayHi("Dear", "Reader");

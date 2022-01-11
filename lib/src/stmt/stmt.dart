@@ -8,6 +8,7 @@ abstract class Stmt {
 abstract class Visitor<R> {
   R? visitBlockStmt(Block stmt);
   R? visitExpressionStmt(Expression stmt);
+  R? visitFunctStmt(Funct stmt);
   R? visitIfStmt(If stmt);
   R? visitPrintStmt(Print stmt);
   R? visitVarStmt(Var stmt);
@@ -37,6 +38,23 @@ class Expression extends Stmt {
   @override
   R? accept<R>(Visitor<R> visitor) {
     return visitor.visitExpressionStmt(this);
+  }
+}
+
+class Funct extends Stmt {
+  Funct({
+    required this.name,
+    required this.params,
+    required this.body,
+  });
+
+  final Token name;
+  final List<Token> params;
+  final List<Stmt> body;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitFunctStmt(this);
   }
 }
 
