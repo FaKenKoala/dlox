@@ -1,13 +1,12 @@
-var a = "global";
-{
-  fun showA() {
-    print a;
+class Bagel {
+  test() {
+    print "hah";
   }
-
-  showA();
-  var a = "block";
-  showA();
-  return "bb";
 }
 
-return "aa";
+print Bagel;
+
+var bagel = Bagel();
+print bagel;
+bagel.test = 10;
+print bagel.test;

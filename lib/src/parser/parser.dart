@@ -26,6 +26,10 @@ class Parser {
 
   Stmt? declaration() {
     try {
+      if (match([TokenType.$class])) {
+        return classDeclaration();
+      }
+
       if (match([TokenType.fun])) {
         return function("function");
       }
@@ -39,6 +43,20 @@ class Parser {
       synchronize();
       return null;
     }
+  }
+
+  Stmt classDeclaration() {
+    Token name = consume(TokenType.identifier, "Expect class name.");
+    consume(TokenType.leftBrace, "Expect '{' before class body.");
+
+    List<Funct> methods = [];
+    while (!check(TokenType.rightBrace) && !isAtEnd()) {
+      methods.add(function("method"));
+    }
+
+    consume(TokenType.rightBrace, "Expect '}' after class body.");
+
+    return Class(name: name, methods: methods);
   }
 
   Stmt statement() {
@@ -212,6 +230,8 @@ class Parser {
       if (expr is Variable) {
         Token name = expr.name;
         return Assign(name: name, value: value);
+      } else if (expr is Get) {
+        return Set(object: expr.object, name: expr.name, value: value);
       }
 
       error(equals, "Invalid assignment target.");
@@ -311,6 +331,10 @@ class Parser {
     while (true) {
       if (match([TokenType.leftParen])) {
         expr = finishCall(expr);
+      } else if (match([TokenType.dot])) {
+        Token name =
+            consume(TokenType.identifier, "Expect property name after '.'.");
+        expr = Get(object: expr, name: name);
       } else {
         break;
       }

@@ -7,6 +7,7 @@ abstract class Stmt {
 
 abstract class Visitor<R> {
   R? visitBlockStmt(Block stmt);
+  R? visitClassStmt(Class stmt);
   R? visitExpressionStmt(Expression stmt);
   R? visitFunctStmt(Funct stmt);
   R? visitIfStmt(If stmt);
@@ -26,6 +27,21 @@ class Block extends Stmt {
   @override
   R? accept<R>(Visitor<R> visitor) {
     return visitor.visitBlockStmt(this);
+  }
+}
+
+class Class extends Stmt {
+  Class({
+    required this.name,
+    required this.methods,
+  });
+
+  final Token name;
+  final List<Funct> methods;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitClassStmt(this);
   }
 }
 

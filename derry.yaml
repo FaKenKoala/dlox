@@ -1,0 +1,5 @@
+ast:
+  - dart bin/tool/generate_ast.dart
+
+lox:
+  - dart bin/lox/dlox.dart test.lox

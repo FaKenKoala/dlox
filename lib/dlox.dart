@@ -1,8 +1,6 @@
 import 'dart:io';
 
-import 'package:dlox/src/ast_printer/ast_printer.dart';
 import 'package:dlox/src/error/runtime_error.dart';
-import 'package:dlox/src/expr/expr.dart';
 import 'package:dlox/src/interpreter/interpreter.dart';
 import 'package:dlox/src/parser/parser.dart';
 import 'package:dlox/src/resolver/resolver.dart';

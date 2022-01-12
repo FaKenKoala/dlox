@@ -101,12 +101,23 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
   }
 
   @override
+  void visitClassStmt(stmt.Class stmt) {
+    declare(stmt.name);
+    define(stmt.name);
+  }
+
+  @override
   void visitCallExpr(expr.Call exprP) {
     resolveExpr(exprP.callee);
 
     for (expr.Expr argument in exprP.arguments) {
       resolveExpr(argument);
     }
+  }
+
+  @override
+  void visitGetExpr(expr.Get expr) {
+    resolveExpr(expr.object);
   }
 
   @override
@@ -143,6 +154,12 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
   void visitLogicalExpr(expr.Logical expr) {
     resolveExpr(expr.left);
     resolveExpr(expr.right);
+  }
+
+  @override
+  void visitSetExpr(expr.Set expr) {
+    resolveExpr(expr.value);
+    resolveExpr(expr.object);
   }
 
   @override

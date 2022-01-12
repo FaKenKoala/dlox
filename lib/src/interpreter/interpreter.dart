@@ -1,10 +1,12 @@
 import 'package:dlox/dlox.dart';
 import 'package:dlox/src/callable/lox_callable.dart';
+import 'package:dlox/src/class/lox_class.dart';
 import 'package:dlox/src/environment/environment.dart';
 import 'package:dlox/src/error/return_error.dart';
 import 'package:dlox/src/error/runtime_error.dart';
 import 'package:dlox/src/expr/expr.dart' as expr;
 import 'package:dlox/src/function/lox_function.dart';
+import 'package:dlox/src/instance/lox_instance.dart';
 import 'package:dlox/src/stmt/stmt.dart' as stmt;
 import 'package:dlox/src/stmt/stmt.dart';
 import 'package:dlox/src/token/token.dart';
@@ -110,6 +112,19 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   }
 
   @override
+  Object? visitSetExpr(expr.Set expr) {
+    Object? object = evaluate(expr.object);
+
+    if (object is! LoxInstance) {
+      throw RuntimeError(expr.name, "Only instances have fields");
+    }
+
+    Object? value = evaluate(expr.value);
+    object.set(expr.name, value);
+    return value;
+  }
+
+  @override
   Object? visitUnaryExpr(expr.Unary expr) {
     Object? right = evaluate(expr.right);
 
@@ -169,6 +184,16 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   }
 
   @override
+  Object? visitGetExpr(expr.Get expr) {
+    Object? object = evaluate(expr.object);
+    if (object is LoxInstance) {
+      return object.get(expr.name);
+    }
+
+    throw RuntimeError(expr.name, "Only instances have properties.");
+  }
+
+  @override
   void visitExpressionStmt(stmt.Expression stmt) {
     evaluate(stmt.expression);
   }
@@ -192,6 +217,13 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   @override
   void visitBlockStmt(stmt.Block stmt) {
     executeBlock(stmt.statements, Environment(_environment));
+  }
+
+  @override
+  void visitClassStmt(stmt.Class stmt) {
+    _environment.define(stmt.name.lexeme, null);
+    LoxClass kclass = LoxClass(stmt.name.lexeme);
+    _environment.assign(stmt.name, kclass);
   }
 
   @override
