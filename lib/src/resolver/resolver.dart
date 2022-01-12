@@ -7,6 +7,7 @@ import 'package:dlox/src/token/token.dart';
 enum _FunctionType {
   none,
   $function,
+  method,
 }
 
 class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
@@ -101,9 +102,14 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
   }
 
   @override
-  void visitClassStmt(stmt.Class stmt) {
-    declare(stmt.name);
-    define(stmt.name);
+  void visitClassStmt(stmt.Class stmtP) {
+    declare(stmtP.name);
+
+    for (stmt.Funct method in stmtP.methods) {
+      _FunctionType declaration = _FunctionType.method;
+      resolveFunction(method, declaration);
+    }
+    define(stmtP.name);
   }
 
   @override

@@ -220,10 +220,17 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   }
 
   @override
-  void visitClassStmt(stmt.Class stmt) {
-    _environment.define(stmt.name.lexeme, null);
-    LoxClass kclass = LoxClass(stmt.name.lexeme);
-    _environment.assign(stmt.name, kclass);
+  void visitClassStmt(stmt.Class stmtP) {
+    _environment.define(stmtP.name.lexeme, null);
+
+    Map<String, LoxFunction> methods = {};
+    for (stmt.Funct method in stmtP.methods) {
+      LoxFunction function = LoxFunction(method, _environment);
+      methods[method.name.lexeme] = function;
+    }
+
+    LoxClass kclass = LoxClass(stmtP.name.lexeme, methods);
+    _environment.assign(stmtP.name, kclass);
   }
 
   @override
