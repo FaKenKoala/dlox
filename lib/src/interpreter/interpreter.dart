@@ -320,7 +320,6 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
   void resolve(expr.Expr expr, int depth) {
     locals[expr] = depth;
-    print('$locals');
   }
 
   void interpret(List<stmt.Stmt> statements) {
