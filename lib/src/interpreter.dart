@@ -230,7 +230,8 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
     Map<String, LoxFunction> methods = {};
     for (stmt.Funct method in stmtP.methods) {
-      LoxFunction function = LoxFunction(method, _environment);
+      LoxFunction function =
+          LoxFunction(method, _environment, method.name.lexeme == 'init');
       methods[method.name.lexeme] = function;
     }
 
@@ -256,7 +257,7 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
   @override
   void visitFunctStmt(stmt.Funct stmt) {
-    LoxFunction function = LoxFunction(stmt, _environment);
+    LoxFunction function = LoxFunction(stmt, _environment, false);
     _environment.define(stmt.name.lexeme, function);
   }
 

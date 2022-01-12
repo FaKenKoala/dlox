@@ -8,6 +8,7 @@ import 'package:dlox/src/token.dart';
 enum _FunctionType {
   none,
   $function,
+  initializer,
   method,
 }
 
@@ -121,6 +122,10 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
 
     for (stmt.Funct method in stmtP.methods) {
       _FunctionType declaration = _FunctionType.method;
+      if (method.name.lexeme == 'init') {
+        declaration = _FunctionType.initializer;
+      }
+
       resolveFunction(method, declaration);
     }
 
@@ -206,6 +211,10 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
     }
 
     if (stmt.value != null) {
+      if (_currentFunction == _FunctionType.initializer) {
+        Lox.errorToken(stmt.keyword, "Can't return a value from an intializer.");
+      }
+      
       resolveExpr(stmt.value!);
     }
   }
