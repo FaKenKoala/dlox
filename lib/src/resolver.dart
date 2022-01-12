@@ -15,6 +15,7 @@ enum _FunctionType {
 enum _ClassType {
   none,
   $class,
+  subclass,
 }
 
 class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
@@ -123,7 +124,13 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
     }
 
     if (stmtP.superclass != null) {
+      _currentClass = _ClassType.subclass;
       resolveExpr(stmtP.superclass!);
+    }
+
+    if (stmtP.superclass != null) {
+      beginScope();
+      scopes.peek()["super"] = true;
     }
 
     beginScope();
@@ -136,6 +143,10 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
       }
 
       resolveFunction(method, declaration);
+    }
+
+    if (stmtP.superclass != null) {
+      endScope();
     }
 
     _currentClass = enclosingClass;
@@ -196,6 +207,17 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
   void visitSetExpr(expr.Set expr) {
     resolveExpr(expr.value);
     resolveExpr(expr.object);
+  }
+
+  @override
+  void visitSuperExpr(expr.Super expr) {
+    if (_currentClass == _ClassType.none) {
+      Lox.errorToken(expr.keyword, "Can't use 'super' outside of a class.");
+    } else if (_currentClass != _ClassType.subclass) {
+      Lox.errorToken(
+          expr.keyword, "Can't use 'super' in a class with no superclass.");
+    }
+    resolveLocal(expr, expr.keyword);
   }
 
   @override

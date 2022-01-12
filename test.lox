@@ -1,17 +1,14 @@
-class Doughnut {
+class Base {
   cook() {
-    print "Fry until golden brown.";
+    print "base";
   }
 }
 
-class BostonCream < Doughnut {
+class Eclair < Base {
   cook() {
-    print "BostonCream";
+    super.cook();
+    print "Pipe full of creme patissiere.";
   }
 }
 
-var cream1 = BostonCream();
-var cream2 = Doughnut();
-
-cream1.cook();
-cream2.cook();
+Eclair().cook();

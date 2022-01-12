@@ -381,6 +381,14 @@ class Parser {
       return Literal(value: previous().literal);
     }
 
+    if (match([TokenType.$super])) {
+      Token keyword = previous();
+      consume(TokenType.dot, "Expect '.' after 'super'.");
+      Token method =
+          consume(TokenType.identifier, "Expect superclass method name.");
+      return Super(keyword: keyword, method: method);
+    }
+
     if (match([TokenType.$this])) {
       return This(keyword: previous());
     }

@@ -125,6 +125,26 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   }
 
   @override
+  Object? visitSuperExpr(expr.Super expr) {
+    int? distance = locals[expr];
+    LoxClass? superclass;
+    LoxInstance? object;
+
+    if (distance != null) {
+      superclass = _environment.getAt(distance, "super") as LoxClass?;
+      object = _environment.getAt(distance - 1, "this") as LoxInstance?;
+    }
+
+    LoxFunction? method = superclass?.findMethod(expr.method.lexeme);
+
+    if (object == null || method == null) {
+      throw RuntimeError(
+          expr.method, "Undefined property '${expr.method.lexeme}'.");
+    }
+    return method.bind(object);
+  }
+
+  @override
   Object? visitThisExpr(expr.This expr) {
     return lookUpVariable(expr.keyword, expr);
   }
@@ -237,6 +257,11 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
     _environment.define(stmtP.name.lexeme, null);
 
+    if (stmtP.superclass != null) {
+      _environment = Environment(_environment);
+      _environment.define("super", superclass);
+    }
+
     Map<String, LoxFunction> methods = {};
     for (stmt.Funct method in stmtP.methods) {
       LoxFunction function =
@@ -246,6 +271,10 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
     LoxClass kclass =
         LoxClass(stmtP.name.lexeme, superclass as LoxClass?, methods);
+
+    if (superclass != null) {
+      _environment = _environment.enclosing!;
+    }
     _environment.assign(stmtP.name, kclass);
   }
 
