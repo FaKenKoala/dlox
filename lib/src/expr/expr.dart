@@ -13,6 +13,7 @@ abstract class Visitor<R> {
   R? visitLiteralExpr(Literal expr);
   R? visitLogicalExpr(Logical expr);
   R? visitSetExpr(Set expr);
+  R? visitThisExpr(This expr);
   R? visitUnaryExpr(Unary expr);
   R? visitVariableExpr(Variable expr);
 }
@@ -138,6 +139,19 @@ class Set extends Expr {
   @override
   R? accept<R>(Visitor<R> visitor) {
     return visitor.visitSetExpr(this);
+  }
+}
+
+class This extends Expr {
+  This({
+    required this.keyword,
+  });
+
+  final Token keyword;
+
+  @override
+  R? accept<R>(Visitor<R> visitor) {
+    return visitor.visitThisExpr(this);
   }
 }
 

@@ -20,7 +20,7 @@ class LoxInstance {
 
     LoxFunction? method = kclass.findMethod(name.lexeme);
     if (method != null) {
-      return method;
+      return method.bind(this);
     }
 
     throw RuntimeError(name, "Undefined property '${name.lexeme}'.");

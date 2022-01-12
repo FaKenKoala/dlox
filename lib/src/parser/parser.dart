@@ -375,6 +375,10 @@ class Parser {
       return Literal(value: previous().literal);
     }
 
+    if (match([TokenType.$this])) {
+      return This(keyword: previous());
+    }
+
     if (match([TokenType.identifier])) {
       return Variable(name: previous());
     }

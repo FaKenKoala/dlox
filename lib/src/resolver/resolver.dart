@@ -1,6 +1,7 @@
 import 'package:dlox/dlox.dart';
 import 'package:dlox/src/expr/expr.dart' as expr;
 import 'package:dlox/src/interpreter/interpreter.dart';
+import 'package:dlox/src/stack.dart';
 import 'package:dlox/src/stmt/stmt.dart' as stmt;
 import 'package:dlox/src/token/token.dart';
 
@@ -10,11 +11,17 @@ enum _FunctionType {
   method,
 }
 
+enum _ClassType {
+  none,
+  $class,
+}
+
 class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
   Resolver(this.interpreter);
   final Interpreter interpreter;
-  final List<Map<String, bool>> scopes = [];
+  final Stack<Map<String, bool>> scopes = Stack();
   _FunctionType _currentFunction = _FunctionType.none;
+  _ClassType _currentClass = _ClassType.none;
 
   void resolveStmtList(List<stmt.Stmt> statements) {
     for (stmt.Stmt statement in statements) {
@@ -31,11 +38,11 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
   }
 
   void beginScope() {
-    scopes.insert(0, <String, bool>{});
+    scopes.push(<String, bool>{});
   }
 
   void endScope() {
-    scopes.removeAt(0);
+    scopes.pop();
   }
 
   void declare(Token name) {
@@ -43,7 +50,7 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
       return;
     }
 
-    Map<String, bool> scope = scopes[0];
+    Map<String, bool> scope = scopes.peek();
 
     if (scope.containsKey(name.lexeme)) {
       Lox.errorToken(name, "Already a variable with this name in this scope.");
@@ -57,12 +64,12 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
       return;
     }
 
-    scopes[0][name.lexeme] = true;
+    scopes.peek()[name.lexeme] = true;
   }
 
   void resolveLocal(expr.Expr expr, Token name) {
     for (int i = scopes.length - 1; i >= 0; i--) {
-      if (scopes[i].containsKey(name.lexeme)) {
+      if (scopes.get(i).containsKey(name.lexeme)) {
         interpreter.resolve(expr, scopes.length - 1 - i);
         return;
       }
@@ -103,13 +110,22 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
 
   @override
   void visitClassStmt(stmt.Class stmtP) {
+    _ClassType enclosingClass = _currentClass;
+    _currentClass = _ClassType.$class;
+
     declare(stmtP.name);
+    define(stmtP.name);
+
+    beginScope();
+    scopes.peek()["this"] = true;
 
     for (stmt.Funct method in stmtP.methods) {
       _FunctionType declaration = _FunctionType.method;
       resolveFunction(method, declaration);
     }
-    define(stmtP.name);
+
+    _currentClass = enclosingClass;
+    endScope();
   }
 
   @override
@@ -169,6 +185,16 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
   }
 
   @override
+  void visitThisExpr(expr.This expr) {
+    if (_currentClass == _ClassType.none) {
+      Lox.errorToken(expr.keyword, "Can't use 'this' outside of a class.");
+      return;
+    }
+
+    resolveLocal(expr, expr.keyword);
+  }
+
+  @override
   void visitPrintStmt(stmt.Print stmt) {
     resolveExpr(stmt.expression);
   }
@@ -200,7 +226,7 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
 
   @override
   void visitVariableExpr(expr.Variable expr) {
-    if (scopes.isNotEmpty && scopes[0][expr.name.lexeme] == false) {
+    if (scopes.isNotEmpty && scopes.peek()[expr.name.lexeme] == false) {
       Lox.errorToken(
           expr.name, "Can't read local variable in its own initializer");
     }

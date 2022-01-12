@@ -125,6 +125,11 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   }
 
   @override
+  Object? visitThisExpr(expr.This expr) {
+    return lookUpVariable(expr.keyword, expr);
+  }
+
+  @override
   Object? visitUnaryExpr(expr.Unary expr) {
     Object? right = evaluate(expr.right);
 
@@ -142,10 +147,10 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
   @override
   Object? visitVariableExpr(expr.Variable expr) {
-    return lookupVariable(expr.name, expr);
+    return lookUpVariable(expr.name, expr);
   }
 
-  Object? lookupVariable(Token name, expr.Expr expr) {
+  Object? lookUpVariable(Token name, expr.Expr expr) {
     int? distance = locals[expr];
     if (distance != null) {
       return _environment.getAt(distance, name.lexeme);
@@ -315,6 +320,7 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
   void resolve(expr.Expr expr, int depth) {
     locals[expr] = depth;
+    print('$locals');
   }
 
   void interpret(List<stmt.Stmt> statements) {

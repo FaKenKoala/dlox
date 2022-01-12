@@ -1,3 +1,7 @@
+import 'dart:collection';
+
+import 'package:collection/collection.dart';
+
 void main() {
   ///           op1   op2   op3   op4
   ///   class1
@@ -29,7 +33,6 @@ void main() {
   Visitor<int> visitorA = VisitorA();
   Visitor<double> visitorB = VisitorB();
   Visitor<String> visitorC = VisitorC();
-
 }
 
 abstract class Visitor<R> {
