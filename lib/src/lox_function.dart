@@ -1,9 +1,9 @@
-import 'package:dlox/src/callable/lox_callable.dart';
-import 'package:dlox/src/environment/environment.dart';
-import 'package:dlox/src/error/return_error.dart';
-import 'package:dlox/src/instance/lox_instance.dart';
-import 'package:dlox/src/interpreter/interpreter.dart';
-import 'package:dlox/src/stmt/stmt.dart';
+import 'package:dlox/src/lox_callable.dart';
+import 'package:dlox/src/environment.dart';
+import 'package:dlox/src/return_error.dart';
+import 'package:dlox/src/lox_instance.dart';
+import 'package:dlox/src/interpreter.dart';
+import 'package:dlox/src/stmt.dart';
 
 class LoxFunction implements LoxCallable {
   LoxFunction(this._declaration, this._closure);

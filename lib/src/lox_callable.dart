@@ -1,4 +1,4 @@
-import 'package:dlox/src/interpreter/interpreter.dart';
+import 'package:dlox/src/interpreter.dart';
 
 abstract class LoxCallable {
   int arity();

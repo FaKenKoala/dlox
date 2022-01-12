@@ -5,6 +5,6 @@ class Cake {
   }
 }
 
-var cake = Cake();
+var cake = Cake(123);
 cake.flavor = "German chocolate";
 cake.taste(); // Prints "The German chocolate cake is delicious!".

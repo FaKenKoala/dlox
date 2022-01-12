@@ -1,4 +1,4 @@
-import 'package:dlox/src/token/token.dart';
+import 'package:dlox/src/token.dart';
 
 abstract class Expr {
   R? accept<R>(Visitor<R> visitor);

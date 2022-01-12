@@ -1,9 +1,9 @@
 import 'package:dlox/dlox.dart';
-import 'package:dlox/src/expr/expr.dart' as expr;
-import 'package:dlox/src/interpreter/interpreter.dart';
+import 'package:dlox/src/expr.dart' as expr;
+import 'package:dlox/src/interpreter.dart';
 import 'package:dlox/src/stack.dart';
-import 'package:dlox/src/stmt/stmt.dart' as stmt;
-import 'package:dlox/src/token/token.dart';
+import 'package:dlox/src/stmt.dart' as stmt;
+import 'package:dlox/src/token.dart';
 
 enum _FunctionType {
   none,

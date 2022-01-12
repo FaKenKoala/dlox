@@ -1,5 +1,5 @@
-import 'package:dlox/src/token/token.dart';
-import 'package:dlox/src/expr/expr.dart';
+import 'package:dlox/src/token.dart';
+import 'package:dlox/src/expr.dart';
 
 abstract class Stmt {
   R? accept<R>(Visitor<R> visitor);

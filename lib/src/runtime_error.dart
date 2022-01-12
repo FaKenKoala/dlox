@@ -1,4 +1,4 @@
-import 'package:dlox/src/token/token.dart';
+import 'package:dlox/src/token.dart';
 
 class RuntimeError implements Exception {
   RuntimeError(this.token, this.message);

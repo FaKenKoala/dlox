@@ -1,16 +1,16 @@
 import 'package:dlox/dlox.dart';
-import 'package:dlox/src/callable/lox_callable.dart';
-import 'package:dlox/src/class/lox_class.dart';
-import 'package:dlox/src/environment/environment.dart';
-import 'package:dlox/src/error/return_error.dart';
-import 'package:dlox/src/error/runtime_error.dart';
-import 'package:dlox/src/expr/expr.dart' as expr;
-import 'package:dlox/src/function/lox_function.dart';
-import 'package:dlox/src/instance/lox_instance.dart';
-import 'package:dlox/src/stmt/stmt.dart' as stmt;
-import 'package:dlox/src/stmt/stmt.dart';
-import 'package:dlox/src/token/token.dart';
-import 'package:dlox/src/token/token_type.dart';
+import 'package:dlox/src/lox_callable.dart';
+import 'package:dlox/src/lox_class.dart';
+import 'package:dlox/src/environment.dart';
+import 'package:dlox/src/return_error.dart';
+import 'package:dlox/src/runtime_error.dart';
+import 'package:dlox/src/expr.dart' as expr;
+import 'package:dlox/src/lox_function.dart';
+import 'package:dlox/src/lox_instance.dart';
+import 'package:dlox/src/stmt.dart' as stmt;
+import 'package:dlox/src/stmt.dart';
+import 'package:dlox/src/token.dart';
+import 'package:dlox/src/token_type.dart';
 
 class _ClockLoxCallable implements LoxCallable {
   @override

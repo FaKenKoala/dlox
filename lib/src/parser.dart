@@ -1,10 +1,9 @@
-import 'package:dlox/src/expr/expr.dart';
-import 'package:dlox/src/parser/parse_error.dart';
-import 'package:dlox/src/stmt/stmt.dart';
-import 'package:dlox/src/token/token.dart';
-import 'package:dlox/src/token/token_type.dart';
+import 'package:dlox/src/expr.dart';
+import 'package:dlox/src/stmt.dart';
+import 'package:dlox/src/token.dart';
+import 'package:dlox/src/token_type.dart';
 
-import '../../dlox.dart';
+import '../dlox.dart';
 
 class Parser {
   Parser(this._tokens);
@@ -465,4 +464,8 @@ class Parser {
       advance();
     }
   }
+}
+
+class ParseError implements Exception {
+  
 }

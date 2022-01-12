@@ -1,4 +1,4 @@
-import 'package:dlox/src/token/token_type.dart';
+import 'package:dlox/src/token_type.dart';
 
 class Token {
   Token({
@@ -18,3 +18,4 @@ class Token {
     return '$type $lexeme $literal';
   }
 }
+

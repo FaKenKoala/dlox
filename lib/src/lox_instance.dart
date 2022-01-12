@@ -1,7 +1,7 @@
-import 'package:dlox/src/class/lox_class.dart';
-import 'package:dlox/src/error/runtime_error.dart';
-import 'package:dlox/src/function/lox_function.dart';
-import 'package:dlox/src/token/token.dart';
+import 'package:dlox/src/lox_class.dart';
+import 'package:dlox/src/runtime_error.dart';
+import 'package:dlox/src/lox_function.dart';
+import 'package:dlox/src/token.dart';
 
 class LoxInstance {
   LoxInstance(this.kclass);

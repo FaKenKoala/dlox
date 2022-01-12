@@ -1,7 +1,7 @@
-import 'package:dlox/src/token/token.dart';
-import 'package:dlox/src/token/token_type.dart';
+import 'package:dlox/src/token.dart';
+import 'package:dlox/src/token_type.dart';
 
-import '../../dlox.dart';
+import '../dlox.dart';
 
 class Scanner {
   Scanner(this.source);

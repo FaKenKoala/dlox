@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'package:dlox/src/error/runtime_error.dart';
-import 'package:dlox/src/interpreter/interpreter.dart';
-import 'package:dlox/src/parser/parser.dart';
-import 'package:dlox/src/resolver/resolver.dart';
-import 'package:dlox/src/stmt/stmt.dart';
-import 'package:dlox/src/token/token_type.dart';
+import 'package:dlox/src/runtime_error.dart';
+import 'package:dlox/src/interpreter.dart';
+import 'package:dlox/src/parser.dart';
+import 'package:dlox/src/resolver.dart';
+import 'package:dlox/src/stmt.dart';
+import 'package:dlox/src/token_type.dart';
 
-import 'src/scanner/scanner.dart';
-import 'src/token/token.dart';
+import 'src/scanner.dart';
+import 'src/token.dart';
 
 class Lox {
   static final Interpreter interpreter = Interpreter();

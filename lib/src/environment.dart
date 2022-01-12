@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:dlox/src/error/runtime_error.dart';
-import 'package:dlox/src/token/token.dart';
+import 'package:dlox/src/runtime_error.dart';
+import 'package:dlox/src/token.dart';
 
 class Environment {
   Environment([this.enclosing]);
