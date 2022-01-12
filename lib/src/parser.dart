@@ -46,6 +46,13 @@ class Parser {
 
   Stmt classDeclaration() {
     Token name = consume(TokenType.identifier, "Expect class name.");
+
+    Variable? superclass;
+    if (match([TokenType.less])) {
+      consume(TokenType.identifier, "Expect superclass name.");
+      superclass = Variable(name: previous());
+    }
+
     consume(TokenType.leftBrace, "Expect '{' before class body.");
 
     List<Funct> methods = [];
@@ -55,7 +62,7 @@ class Parser {
 
     consume(TokenType.rightBrace, "Expect '}' after class body.");
 
-    return Class(name: name, methods: methods);
+    return Class(name: name, superclass: superclass, methods: methods);
   }
 
   Stmt statement() {
@@ -466,6 +473,4 @@ class Parser {
   }
 }
 
-class ParseError implements Exception {
-  
-}
+class ParseError implements Exception {}

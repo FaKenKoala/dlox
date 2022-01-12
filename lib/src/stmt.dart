@@ -33,10 +33,12 @@ class Block extends Stmt {
 class Class extends Stmt {
   Class({
     required this.name,
+    required this.superclass,
     required this.methods,
   });
 
   final Token name;
+  final Variable? superclass;
   final List<Funct> methods;
 
   @override

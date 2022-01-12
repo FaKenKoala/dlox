@@ -8,7 +8,7 @@ void main(List<String> arguments) {
     // return;
     outputDir = arguments[0];
   }
-  GenerateAst.defineAst(outputDir ?? 'lib/src/expr/', "Expr", [
+  GenerateAst.defineAst(outputDir ?? 'lib/src/', "Expr", [
     "Assign   : Token name, Expr value",
     "Binary   : Expr left, Token operator, Expr right",
     "Call     : Expr callee, Token paren, List<Expr> arguments",
@@ -22,9 +22,9 @@ void main(List<String> arguments) {
     "Variable : Token name"
   ]);
 
-  GenerateAst.defineAst(outputDir ?? 'lib/src/stmt/', "Stmt", [
+  GenerateAst.defineAst(outputDir ?? 'lib/src/', "Stmt", [
     "Block       : List<Stmt> statements",
-    "Class       : Token name, List<Funct> methods",
+    "Class       : Token name, Variable? superclass, List<Funct> methods",
     "Expression  : Expr expression",
     "Funct       : Token name, List<Token> params, List<Stmt> body",
     "If          : Expr condition, Stmt thenBranch, Stmt? elseBranch",
@@ -46,9 +46,9 @@ class GenerateAst {
       file.parent.createSync();
     }
     final sink = file.openWrite();
-    sink.writeln("import 'package:dlox/src/token/token.dart';");
+    sink.writeln("import 'package:dlox/src/token.dart';");
     if (baseName == 'Stmt') {
-      sink.writeln("import 'package:dlox/src/expr/expr.dart';");
+      sink.writeln("import 'package:dlox/src/expr.dart';");
     }
     sink.writeln();
 

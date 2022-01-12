@@ -226,6 +226,15 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
   @override
   void visitClassStmt(stmt.Class stmtP) {
+    Object? superclass;
+    if (stmtP.superclass != null) {
+      superclass = evaluate(stmtP.superclass!);
+      if (superclass is! LoxClass) {
+        throw RuntimeError(
+            stmtP.superclass!.name, "Superclass must be a class.");
+      }
+    }
+
     _environment.define(stmtP.name.lexeme, null);
 
     Map<String, LoxFunction> methods = {};
@@ -235,7 +244,8 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
       methods[method.name.lexeme] = function;
     }
 
-    LoxClass kclass = LoxClass(stmtP.name.lexeme, methods);
+    LoxClass kclass =
+        LoxClass(stmtP.name.lexeme, superclass as LoxClass?, methods);
     _environment.assign(stmtP.name, kclass);
   }
 

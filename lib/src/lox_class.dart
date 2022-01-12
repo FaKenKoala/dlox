@@ -4,12 +4,13 @@ import 'package:dlox/src/lox_instance.dart';
 import 'package:dlox/src/interpreter.dart';
 
 class LoxClass implements LoxCallable {
-  LoxClass(this.name, this.methods);
+  LoxClass(this.name, this.superclass, this.methods);
   final String name;
+  final LoxClass? superclass;
   final Map<String, LoxFunction> methods;
 
   LoxFunction? findMethod(String name) {
-    return methods[name];
+    return methods[name] ?? superclass?.findMethod(name);
   }
 
   @override

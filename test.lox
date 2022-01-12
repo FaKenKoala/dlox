@@ -1,8 +1,17 @@
-class Foo {
-  init() {
-    return;
+class Doughnut {
+  cook() {
+    print "Fry until golden brown.";
   }
 }
 
-var foo = Foo();
-print foo.init();
+class BostonCream < Doughnut {
+  cook() {
+    print "BostonCream";
+  }
+}
+
+var cream1 = BostonCream();
+var cream2 = Doughnut();
+
+cream1.cook();
+cream2.cook();

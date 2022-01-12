@@ -117,6 +117,15 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
     declare(stmtP.name);
     define(stmtP.name);
 
+    if (stmtP.name.lexeme == stmtP.superclass?.name.lexeme) {
+      Lox.errorToken(
+          stmtP.superclass!.name, "A class can't inherit from itself.");
+    }
+
+    if (stmtP.superclass != null) {
+      resolveExpr(stmtP.superclass!);
+    }
+
     beginScope();
     scopes.peek()["this"] = true;
 
@@ -212,9 +221,10 @@ class Resolver implements expr.Visitor<void>, stmt.Visitor<void> {
 
     if (stmt.value != null) {
       if (_currentFunction == _FunctionType.initializer) {
-        Lox.errorToken(stmt.keyword, "Can't return a value from an intializer.");
+        Lox.errorToken(
+            stmt.keyword, "Can't return a value from an intializer.");
       }
-      
+
       resolveExpr(stmt.value!);
     }
   }
