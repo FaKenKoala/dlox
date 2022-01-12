@@ -5,6 +5,7 @@ import 'package:dlox/src/error/runtime_error.dart';
 import 'package:dlox/src/expr/expr.dart';
 import 'package:dlox/src/interpreter/interpreter.dart';
 import 'package:dlox/src/parser/parser.dart';
+import 'package:dlox/src/resolver/resolver.dart';
 import 'package:dlox/src/stmt/stmt.dart';
 import 'package:dlox/src/token/token_type.dart';
 
@@ -59,6 +60,14 @@ class Lox {
     if (hadError) {
       return;
     }
+
+    Resolver resolver = Resolver(interpreter);
+    resolver.resolveStmtList(statements);
+
+    if (hadError) {
+      return;
+    }
+
     interpreter.interpret(statements);
   }
 

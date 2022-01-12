@@ -30,6 +30,7 @@ class _ClockLoxCallable implements LoxCallable {
 class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
   final Environment globals = Environment();
   late Environment _environment = globals;
+  final Map<expr.Expr, int> locals = {};
 
   Interpreter() {
     globals.define("clock", _ClockLoxCallable());
@@ -126,13 +127,27 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
 
   @override
   Object? visitVariableExpr(expr.Variable expr) {
-    return _environment.get(expr.name);
+    return lookupVariable(expr.name, expr);
+  }
+
+  Object? lookupVariable(Token name, expr.Expr expr) {
+    int? distance = locals[expr];
+    if (distance != null) {
+      return _environment.getAt(distance, name.lexeme);
+    } else {
+      return globals.get(name);
+    }
   }
 
   @override
   Object? visitAssignExpr(expr.Assign expr) {
     Object? value = evaluate(expr.value);
-    _environment.assign(expr.name, value);
+    int? distance = locals[expr];
+    if (distance != null) {
+      _environment.assignAt(distance, expr.name, value);
+    } else {
+      globals.assign(expr.name, value);
+    }
     return value;
   }
 
@@ -257,6 +272,10 @@ class Interpreter implements expr.Visitor<Object>, stmt.Visitor<void> {
     } finally {
       _environment = previous;
     }
+  }
+
+  void resolve(expr.Expr expr, int depth) {
+    locals[expr] = depth;
   }
 
   void interpret(List<stmt.Stmt> statements) {
