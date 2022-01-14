@@ -13,6 +13,8 @@
 		41575BE92791529C00451521 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 41575BE82791529C00451521 /* debug.c */; };
 		41575BEC2791566500451521 /* value.c in Sources */ = {isa = PBXBuildFile; fileRef = 41575BEB2791566500451521 /* value.c */; };
 		41575BF2279166B900451521 /* vm.c in Sources */ = {isa = PBXBuildFile; fileRef = 41575BF1279166B900451521 /* vm.c */; };
+		41575BF52791834100451521 /* compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 41575BF42791834100451521 /* compile.c */; };
+		41575BF82791842C00451521 /* scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 41575BF72791842C00451521 /* scanner.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +43,10 @@
 		41575BEB2791566500451521 /* value.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = value.c; sourceTree = "<group>"; };
 		41575BF0279166B900451521 /* vm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vm.h; sourceTree = "<group>"; };
 		41575BF1279166B900451521 /* vm.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vm.c; sourceTree = "<group>"; };
+		41575BF32791834100451521 /* compile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compile.h; sourceTree = "<group>"; };
+		41575BF42791834100451521 /* compile.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compile.c; sourceTree = "<group>"; };
+		41575BF62791842C00451521 /* scanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scanner.h; sourceTree = "<group>"; };
+		41575BF72791842C00451521 /* scanner.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scanner.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +91,10 @@
 				41575BEB2791566500451521 /* value.c */,
 				41575BF0279166B900451521 /* vm.h */,
 				41575BF1279166B900451521 /* vm.c */,
+				41575BF32791834100451521 /* compile.h */,
+				41575BF42791834100451521 /* compile.c */,
+				41575BF62791842C00451521 /* scanner.h */,
+				41575BF72791842C00451521 /* scanner.c */,
 			);
 			path = clox;
 			sourceTree = "<group>";
@@ -150,8 +160,10 @@
 				41575BE627914F6900451521 /* chunk.c in Sources */,
 				41575BD127914E4500451521 /* main.c in Sources */,
 				41575BE427914F5700451521 /* memory.c in Sources */,
+				41575BF82791842C00451521 /* scanner.c in Sources */,
 				41575BF2279166B900451521 /* vm.c in Sources */,
 				41575BE92791529C00451521 /* debug.c in Sources */,
+				41575BF52791834100451521 /* compile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
