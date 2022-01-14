@@ -3,14 +3,4 @@ fun fib(n) {
   return fib(n - 1) + fib(n - 2); 
 }
 
-var x = 20;
-
-while (x <= 40) {
-  var before = clock();
-  print x;
-  print fib(x);
-  x = x + 1;
-  var after = clock();
-  print after - before;
-  print "**************";
-}
+var x = 123s;
